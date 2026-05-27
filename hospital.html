@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Residência Grey Sloan - Arquitetura Computacional</title>
+    <link rel="stylesheet" href="hospital.css">
+</head>
+<h1 id="tituloPrincipal">Grey Sloan Memorial: Desafio de Arquitetura</h1>
+
+<div id="containerQuiz">
+    <button id="btnIniciar" onclick="iniciarJogo()">INICIAR RESIDÊNCIA</button>
+
+
+    <div id="areaJogo" class="hidden">
+        <p>Questão <span id="numAtual"></span> de 16</p>
+        <h3 id="pergunta"></h3>
+        <div id="opcoes"></div>
+        <button id="btnSubmeter" onclick="submeter()">Submeter Resposta</button>
+        <p>Erros: <span id="contErros">0</span>/3</p>
+    </div>
+
+    <div id="areaFinal" class="hidden">
+        <h2 id="msgFinal"></h2>
+        <button onclick="location.reload()">Tentar Novamente</button>
+    </div>
+</div>
+</div>
+</body>
+
+</html>
+<script>
+    const listaDeQuestoes = [
+
+        {
+            pergunta: "Qual componente realiza as operações lógicas e aritméticas?",
+            a: "CPU",
+            b: "ULA",
+            c: "Registradores",
+            d: "Memória RAM",
+            correta: "b"
+        },
+        {
+            pergunta: "Qual componente é o responsável por realizar as operações lógicas e aritméticas (Lógica)?",
+            a: "Unidade de Controle",
+            b: "Clock",
+            c: "ULA",
+            d: "Barramento",
+            correta: "c"
+        },
+        {
+            pergunta: "Qual é a memória veloz dentro da CPU que permite acesso mais rápido?",
+            a: "Registradores",
+            b: "Cache L3",
+            c: "SSD",
+            d: "ROM",
+            correta: "a"
+        },
+        {
+            pergunta: "Sou como uma sala de cirurgia, armazeno dados temporariamente. Quem sou eu?",
+            a: "Disco Rígido",
+            b: "Memória RAM",
+            c: "BIOS",
+            d: "GPU",
+            correta: "b"
+        },
+        {
+            pergunta: "Qual memória armazena o firmware essencial (como o BIOS)?",
+            a: "RAM",
+            b: "Pen Drive",
+            c: "Memória ROM",
+            d: "ULA",
+            correta: "c"
+        },
+        {
+            pergunta: "Qual tipo de memória precisa de luz ultravioleta para ser regravada?",
+            a: "Eprom",
+            b: "Flash",
+            c: "SRAM",
+            d: "DRAM",
+            correta: "a"
+        },
+        {
+            pergunta: "Que memória, comum em pen drives, mantém dados sem energia?",
+            a: "RAM",
+            b: "Cache",
+            c: "Flash",
+            d: "Registrador",
+            correta: "c"
+        },
+        {
+            pergunta: "Qual é a memória de massa que garante o armazenamento persistente?",
+            a: "Memória de massa",
+            b: "ULA",
+            c: "DMA",
+            d: "Clock",
+            correta: "a"
+        },
+        {
+            pergunta: "Qual componente permite que periféricos falem diretamente com a RAM?",
+            a: "CPU",
+            b: "DMA",
+            c: "Chipset",
+            d: "BIOS",
+            correta: "b"
+        },
+        {
+            pergunta: "Qual componente habilita um chip específico para que o computador saiba com quem falar?",
+            a: "Adress Bus",
+            b: "Data Bus",
+            c: "CS – Chip select",
+            d: "Clock",
+            correta: "c"
+        },
+        {
+            pergunta: "Qual componente carrega os endereços de memória para encontrar dados?",
+            a: "Data Bus",
+            b: "Adress bus",
+            c: "Control Bus",
+            d: "ULA",
+            correta: "b"
+        },
+        {
+            pergunta: "Qual componente é responsável por transportar os dados reais entre o processador e memória?",
+            a: "Adress bus",
+            b: "Data bus",
+            c: "Chip select",
+            d: "DMA",
+            correta: "b"
+        },
+        {
+            pergunta: "Qual processador da série i possui múltiplos núcleos para realizar várias tarefas?",
+            a: "i3",
+            b: "i5",
+            c: "Pentium",
+            d: "Celeron",
+            correta: "b"
+        },
+        {
+            pergunta: "Qual processador é o 'cirurgião-chefe' da série i com alto desempenho?",
+            a: "i7",
+            b: "i3",
+            c: "Atom",
+            d: "Sempron",
+            correta: "a"
+        },
+        {
+            pergunta: "Qual processador foi criado para melhorar a multitarefa básica (duas unidades)?",
+            a: "Quad core",
+            b: "Single core",
+            c: "Dual core",
+            d: "Octa core",
+            correta: "c"
+        },
+        {
+            pergunta: "Qual componente executa múltiplas threads em quatro núcleos físicos?",
+            a: "Dual core",
+            b: "Quad core",
+            c: "Hexa core",
+            d: "Deca core",
+            correta: "b"
+        }
+
+    ]
+
+    let indice = 0, erros = 0;
+
+    function iniciarJogo() {
+        document.getElementById('btnIniciar').classList.add('hidden');
+        document.getElementById('areaJogo').classList.remove('hidden');
+        renderizarQuestao();
+    }
+
+    function renderizarQuestao() {
+    const q = listaDeQuestoes[indice];
+    document.getElementById('numAtual').innerText = indice + 1;
+    
+    document.getElementById('pergunta').innerHTML = `
+        <div class="pergunta-box">${q.pergunta}</div>
+    `;
+    
+    document.getElementById('opcoes').innerHTML = `
+        <label class="opcao-container"><input type="radio" name="op" value="a"> ${q.a}</label>
+        <label class="opcao-container"><input type="radio" name="op" value="b"> ${q.b}</label>
+        <label class="opcao-container"><input type="radio" name="op" value="c"> ${q.c}</label>
+        <label class="opcao-container"><input type="radio" name="op" value="d"> ${q.d}</label>
+    `;
+}
+
+    function submeter() {
+        const selecionada = document.querySelector('input[name="op"]:checked');
+        if (!selecionada) return alert("Escolha uma opção!");
+
+        if (selecionada.value !== listaDeQuestoes[indice].correta) {
+            erros++;
+            document.getElementById('contErros').innerText = erros;
+        }
+
+        if (erros >= 3) return finalizar(false);
+
+        indice++;
+        if (indice < listaDeQuestoes.length) renderizarQuestao();
+        else finalizar(true);
+    }
+
+    function finalizar(vitoria) {
+    document.getElementById('areaJogo').classList.add('hidden');
+    document.getElementById('areaFinal').classList.remove('hidden');
+
+    const msgElemento = document.getElementById('msgFinal');
+    msgElemento.classList.add('msg-box');
+
+    if (vitoria) {
+        msgElemento.classList.add('vitoria');
+        msgElemento.innerHTML = `
+            <span class="titulo-final">Aprovação no Programa de Residência</span>
+            Parabéns. Você provou que possui o conhecimento técnico necessário para ser um grande médico aqui no Grey Sloan. Você salvou os nossos dados e está aprovado no nosso programa de residência.
+        `;
+    } else {
+        msgElemento.classList.add('derrota');
+        msgElemento.innerHTML = `
+            <span class="titulo-final">Desligamento Hospitalar</span>
+            Sinto muito. O seu desempenho não atingiu os padrões do hospital e você colocou em risco o histórico dos nossos pacientes. Você falhou na sua residência e a sua carreira aqui termina.
+        `;
+    }
+}
+</script>
